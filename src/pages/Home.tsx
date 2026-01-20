@@ -42,6 +42,31 @@ const staggerContainer = {
   }
 };
 
+// ================= CHECKOUT / UTMs (FIX) =================
+const CHECKOUT_BASE = "https://pay.lowify.com.br/checkout?product_id=8UCyL6";
+
+/**
+ * Build checkout URL preserving current page UTMs.
+ * - Macros {{ }} MUST stay only in the ad URL, never here.
+ * - We simply forward whatever querystring arrived on this page.
+ */
+function buildCheckoutUrl() {
+  // In case this gets rendered in non-browser environments, be defensive
+  if (typeof window === "undefined") return CHECKOUT_BASE;
+
+  const current = new URL(window.location.href);
+  const params = new URLSearchParams(current.search);
+
+  // Optional: sanitize utm_source if it came “dirty”
+  const src = (params.get("utm_source") || "").toLowerCase();
+  if (src && (src.includes("fb") || src.includes("face"))) {
+    params.set("utm_source", "facebook");
+  }
+
+  const qs = params.toString();
+  return qs ? `${CHECKOUT_BASE}&${qs}` : CHECKOUT_BASE;
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
@@ -100,7 +125,7 @@ export default function Home() {
               </motion.div>
 
               <CTAButton 
-                href="https://pay.lowify.com.br/checkout?product_id=8UCyL6" 
+                href={buildCheckoutUrl()}
                 size="xl" 
                 variant="accent"
                 className="w-full sm:w-auto shadow-xl shadow-orange-500/20 text-lg sm:text-xl font-black uppercase tracking-tighter"
@@ -191,7 +216,7 @@ export default function Home() {
         <div className="bg-slate-900 text-white rounded-3xl p-8 md:p-12 text-center max-w-4xl mx-auto shadow-2xl">
           <h3 className="text-2xl md:text-3xl font-bold mb-4">Resumindo:</h3>
           <p className="text-lg text-slate-300 mb-8">Se você quer ensinar com excelência sem perder sua saúde mental, este Pack é para você.</p>
-          <CTAButton href="https://pay.lowify.com.br/checkout?product_id=8UCyL6" variant="accent" size="lg" className="w-full sm:w-auto font-black uppercase tracking-tighter">
+          <CTAButton href={buildCheckoutUrl()} variant="accent" size="lg" className="w-full sm:w-auto font-black uppercase tracking-tighter">
             QUERO MEU ACESSO COM DESCONTO AGORA!
           </CTAButton>
         </div>
@@ -308,7 +333,7 @@ export default function Home() {
           </div>
           
           <div className="mt-12 text-center">
-            <CTAButton href="https://pay.lowify.com.br/checkout?product_id=8UCyL6" size="lg" variant="accent" className="w-full sm:w-auto font-black uppercase tracking-tighter">
+            <CTAButton href={buildCheckoutUrl()} size="lg" variant="accent" className="w-full sm:w-auto font-black uppercase tracking-tighter">
               APROVEITAR ESSA OPORTUNIDADE ÚNICA!
             </CTAButton>
           </div>
@@ -485,3 +510,4 @@ export default function Home() {
     </div>
   );
 }
+
