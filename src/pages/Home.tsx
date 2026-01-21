@@ -12,7 +12,6 @@ import {
   Mail,
   Edit3,
   Coffee,
-  ChevronDown,
   Star,
 } from "lucide-react";
 
@@ -44,11 +43,13 @@ const staggerContainer = {
 
 // ================= CHECKOUT / UTMs (FIX) =================
 const CHECKOUT_BASE = "https://pay.lowify.com.br/checkout?product_id=8UCyL6";
+
 function getCheckoutUrl() {
   if (typeof window === "undefined") return CHECKOUT_BASE;
 
   const incoming = new URLSearchParams(window.location.search);
 
+  // Só repassa UTMs
   const allowed = [
     "utm_source",
     "utm_campaign",
@@ -64,6 +65,7 @@ function getCheckoutUrl() {
     if (val) out.set(key, val);
   }
 
+  // Limpa/padroniza utm_source
   const src = (out.get("utm_source") || "").toLowerCase();
 
   if (src.includes("facebook") || src.includes("fb")) {
@@ -76,31 +78,16 @@ function getCheckoutUrl() {
   return qs ? `${CHECKOUT_BASE}&${qs}` : CHECKOUT_BASE;
 }
 
-function getCheckoutUrl() {
-  // Segurança extra: em build/SSR não existe window
-  if (typeof window === "undefined") return CHECKOUT_BASE;
-
-  const params = new URLSearchParams(window.location.search);
-
-  // Sanitiza utm_source se vier "sujo" (ex.: FBxxxx, facebookxxxx)
-  const src = (params.get("utm_source") || "").toLowerCase();
-  if (src && (src.includes("fb") || src.includes("face"))) {
-    params.set("utm_source", "facebook");
-  }
-
-  const qs = params.toString();
-  return qs ? `${CHECKOUT_BASE}&${qs}` : CHECKOUT_BASE;
-}
-
 export default function Home() {
   const goCheckout = (e?: any) => {
-    // Evita qualquer preventDefault interno do CTAButton/Link
     try {
       e?.preventDefault?.();
       e?.stopPropagation?.();
     } catch {}
 
-    window.location.assign(getCheckoutUrl());
+    if (typeof window !== "undefined") {
+      window.location.assign(getCheckoutUrl());
+    }
   };
 
   // Wrapper clicável que funciona mesmo se CTAButton não aceitar onClick
@@ -179,7 +166,7 @@ export default function Home() {
 
               <ClickWrap>
                 <CTAButton
-                  href={CHECKOUT_BASE} // fallback (se JS falhar)
+                  href={getCheckoutUrl()} // fallback já com UTMs limpas
                   size="xl"
                   variant="accent"
                   className="w-full sm:w-auto shadow-xl shadow-orange-500/20 text-lg sm:text-xl font-black uppercase tracking-tighter"
@@ -279,7 +266,7 @@ export default function Home() {
 
           <ClickWrap>
             <CTAButton
-              href={CHECKOUT_BASE}
+              href={getCheckoutUrl()}
               variant="accent"
               size="lg"
               className="w-full sm:w-auto font-black uppercase tracking-tighter"
@@ -411,7 +398,6 @@ export default function Home() {
 
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Connecting line for desktop */}
             <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-primary/20 -z-10" />
 
             {[
@@ -454,7 +440,7 @@ export default function Home() {
           <div className="mt-12 text-center">
             <ClickWrap>
               <CTAButton
-                href={CHECKOUT_BASE}
+                href={getCheckoutUrl()}
                 size="lg"
                 variant="accent"
                 className="w-full sm:w-auto font-black uppercase tracking-tighter"
@@ -463,118 +449,6 @@ export default function Home() {
               </CTAButton>
             </ClickWrap>
           </div>
-        </div>
-      </Section>
-
-      {/* PREVIEW GALLERY */}
-      <Section>
-        <SectionHeader
-          title="Espie o que vem dentro do Pack"
-          subtitle="Veja abaixo alguns exemplos reais das atividades que você vai receber, todas com alta qualidade."
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 px-2">
-          {[
-            "https://i.ibb.co/3YBCn9yw/Exemplo-atividade-8.png",
-            "https://i.ibb.co/TxV9RjZd/Exemplo-atividade-7.png",
-            "https://i.ibb.co/DfBsfLTc/Exemplo-atividade-6.png",
-          ].map((src, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group border border-slate-100"
-            >
-              <img
-                src={src}
-                alt={`Exemplo atividade ${idx + 1}`}
-                className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500"
-              />
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-3">
-          {[
-            "Narrativas e Contos",
-            "Textos Instrucionais",
-            "Comunicação Social",
-            "Jornalístico e Informativo",
-            "Poemas e Rimas",
-            "Linguagem Visual",
-            "Adivinhas",
-            "Parlendas",
-            "Entrevistas",
-            "Anúncios",
-            "Listas",
-            "Diários",
-          ].map((tag, idx) => (
-            <span
-              key={idx}
-              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-full font-medium text-sm border border-slate-200"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </Section>
-
-      {/* BONUS SECTION */}
-      <Section background="purple">
-        <SectionHeader title="Bônus Exclusivos!" subtitle="Se garantir sua vaga agora, você também leva gratuitamente:" />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Kit Leitura e Interpretação",
-              desc: "Potencialize o aprendizado dos seus alunos com este material complementar focado em capacidade crítica.",
-              image: "https://13xdigital.com.br/wp-content/uploads/2023/12/9_-2-e1687900516487.png",
-              price: "R$ 47,90",
-              tag: "Presente #01",
-            },
-            {
-              title: "E-book: Sala em Ordem",
-              desc: "Estratégias práticas de gestão de sala de aula para manter a ordem sem precisar ser a 'professora chata'.",
-              image: "https://13xdigital.com.br/wp-content/uploads/2023/12/10_-e1687900554642.png",
-              price: "R$ 47,90",
-              tag: "Presente #02",
-            },
-            {
-              title: "20 Mapas Mentais de Fixação",
-              desc: "Facilite a memorização dos conteúdos com este recurso visual poderoso. Ideais para revisões rápidas.",
-              image: "https://13xdigital.com.br/wp-content/uploads/2026/01/bonus-3-mapas-mentais.png",
-              price: "R$ 97,90",
-              tag: "Presente #03",
-            },
-          ].map((bonus, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.2 }}
-              className="bg-white rounded-3xl overflow-hidden shadow-xl border border-primary/10 flex flex-col"
-            >
-              <div className="bg-primary/5 p-6 flex justify-center items-center h-48">
-                <img
-                  src={bonus.image}
-                  alt={bonus.title}
-                  className="max-h-full object-contain drop-shadow-lg transform hover:scale-105 transition-transform"
-                />
-              </div>
-              <div className="p-8 flex-1 flex flex-col">
-                <span className="text-xs font-bold tracking-widest text-primary uppercase mb-2">{bonus.tag}</span>
-                <h3 className="text-xl font-bold mb-3 text-slate-900">{bonus.title}</h3>
-                <p className="text-slate-600 text-sm mb-6 flex-1">{bonus.desc}</p>
-                <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
-                  <span className="text-slate-400 line-through text-sm">De {bonus.price}</span>
-                  <span className="font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full text-sm">GRÁTIS</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </Section>
 
@@ -617,7 +491,11 @@ export default function Home() {
                 a: "O pagamento é realizado exclusivamente via PIX para garantir o acesso imediato e o melhor preço promocional. O ambiente é 100% seguro e criptografado.",
               },
             ].map((faq, idx) => (
-              <AccordionItem key={idx} value={`item-${idx}`} className="bg-slate-50 border border-slate-100 rounded-xl px-4">
+              <AccordionItem
+                key={idx}
+                value={`item-${idx}`}
+                className="bg-slate-50 border border-slate-100 rounded-xl px-4"
+              >
                 <AccordionTrigger className="text-left font-semibold text-slate-900 hover:text-primary hover:no-underline py-4 text-base">
                   {faq.q}
                 </AccordionTrigger>
@@ -650,5 +528,6 @@ export default function Home() {
     </div>
   );
 }
+
 
 
