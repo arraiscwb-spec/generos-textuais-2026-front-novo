@@ -44,6 +44,37 @@ const staggerContainer = {
 
 // ================= CHECKOUT / UTMs (FIX) =================
 const CHECKOUT_BASE = "https://pay.lowify.com.br/checkout?product_id=8UCyL6";
+function getCheckoutUrl() {
+  if (typeof window === "undefined") return CHECKOUT_BASE;
+
+  const incoming = new URLSearchParams(window.location.search);
+
+  const allowed = [
+    "utm_source",
+    "utm_campaign",
+    "utm_medium",
+    "utm_content",
+    "utm_term",
+  ];
+
+  const out = new URLSearchParams();
+
+  for (const key of allowed) {
+    const val = incoming.get(key);
+    if (val) out.set(key, val);
+  }
+
+  const src = (out.get("utm_source") || "").toLowerCase();
+
+  if (src.includes("facebook") || src.includes("fb")) {
+    out.set("utm_source", "facebook");
+  } else if (src) {
+    out.set("utm_source", src.replace(/[^a-z0-9_-]/g, ""));
+  }
+
+  const qs = out.toString();
+  return qs ? `${CHECKOUT_BASE}&${qs}` : CHECKOUT_BASE;
+}
 
 function getCheckoutUrl() {
   // Segurança extra: em build/SSR não existe window
