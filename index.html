@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -20,9 +20,7 @@
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
         n = f.fbq = function () {
-          n.callMethod
-            ? n.callMethod.apply(n, arguments)
-            : n.queue.push(arguments);
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
         };
         if (!f._fbq) f._fbq = n;
         n.push = n;
@@ -42,11 +40,13 @@
     <!-- ================= UTMIFY PIXEL ================= -->
     <script>
       window.pixelId = "696d1aa85f65bf26f6fbbc56";
-      var a = document.createElement("script");
-      a.setAttribute("async", "");
-      a.setAttribute("defer", "");
-      a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-      document.head.appendChild(a);
+      (function () {
+        var s = document.createElement("script");
+        s.async = true;
+        s.defer = true;
+        s.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
+        document.head.appendChild(s);
+      })();
     </script>
 
     <!-- ================= UTMIFY UTMS ================= -->
@@ -60,7 +60,6 @@
   </head>
 
   <body>
-    <!-- Meta Pixel noscript precisa ficar no BODY (não no HEAD) -->
     <noscript>
       <img
         height="1"
@@ -74,3 +73,4 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
