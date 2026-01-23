@@ -24,7 +24,7 @@ export function PricingCard() {
         </div>
 
         <CTAButton 
-          href="https://www.ggcheckout.com/checkout/v3/sKTtmB1lTMiJhDlB7qWW"
+          href="https://www.ggcheckout.com/checkout/v4/sKTtmB1lTMiJhDlB7qWW"
           variant="accent" 
           size="xl" 
           className="w-full mb-4 shadow-orange-500/25 font-black uppercase tracking-tighter"
