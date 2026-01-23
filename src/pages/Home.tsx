@@ -42,7 +42,7 @@ const staggerContainer = {
 };
 
 // ================= CHECKOUT / UTMs (FIX) =================
-const CHECKOUT_BASE ="https://www.ggcheckout.com/checkout/v3/sKTtmB1lTMiJhDlB7qWW";
+const CHECKOUT_BASE ="https://www.ggcheckout.com/checkout/v4/sKTtmB1lTMiJhDlB7qWW";
 
 function getCheckoutUrl() {
   if (typeof window === "undefined") return CHECKOUT_BASE;
