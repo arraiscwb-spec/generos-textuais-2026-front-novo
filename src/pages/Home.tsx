@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -42,7 +43,8 @@ const staggerContainer = {
 };
 
 // ================= CHECKOUT / UTMs (FIX) =================
-const CHECKOUT_BASE ="https://www.ggcheckout.com/checkout/v4/sKTtmB1lTMiJhDlB7qWW";
+const CHECKOUT_BASE =
+  "https://www.ggcheckout.com/checkout/v4/sKTtmB1lTMiJhDlB7qWW";
 
 function getCheckoutUrl() {
   if (typeof window === "undefined") return CHECKOUT_BASE;
@@ -58,24 +60,24 @@ function getCheckoutUrl() {
     "utm_term",
   ];
 
-  const out = new URLSearchParams();
+  // Monta URL corretamente (com ? quando precisar)
+  const url = new URL(CHECKOUT_BASE);
 
   for (const key of allowed) {
     const val = incoming.get(key);
-    if (val) out.set(key, val);
+    if (val) url.searchParams.set(key, val);
   }
 
   // Limpa/padroniza utm_source
-  const src = (out.get("utm_source") || "").toLowerCase();
+  const src = (url.searchParams.get("utm_source") || "").toLowerCase();
 
   if (src.includes("facebook") || src.includes("fb")) {
-    out.set("utm_source", "facebook");
+    url.searchParams.set("utm_source", "facebook");
   } else if (src) {
-    out.set("utm_source", src.replace(/[^a-z0-9_-]/g, ""));
+    url.searchParams.set("utm_source", src.replace(/[^a-z0-9_-]/g, ""));
   }
 
-  const qs = out.toString();
-  return qs ? `${CHECKOUT_BASE}&${qs}` : CHECKOUT_BASE;
+  return url.toString();
 }
 
 export default function Home() {
@@ -86,7 +88,8 @@ export default function Home() {
     } catch {}
 
     if (typeof window !== "undefined") {
-      window.location.assign(getCheckoutUrl());
+      // Mais compatível no navegador interno do Facebook/Instagram
+      window.location.href = getCheckoutUrl();
     }
   };
 
@@ -166,7 +169,7 @@ export default function Home() {
 
               <ClickWrap>
                 <CTAButton
-                  href={getCheckoutUrl()} // fallback já com UTMs limpas
+                  href={getCheckoutUrl()} // fallback já com UTMs corretas
                   size="xl"
                   variant="accent"
                   className="w-full sm:w-auto shadow-xl shadow-orange-500/20 text-lg sm:text-xl font-black uppercase tracking-tighter"
@@ -528,6 +531,7 @@ export default function Home() {
     </div>
   );
 }
+
 
 
 
