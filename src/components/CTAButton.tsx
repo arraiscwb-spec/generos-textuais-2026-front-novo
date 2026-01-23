@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import React from "react";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 
@@ -10,19 +10,22 @@ interface CTAButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   showIcon?: boolean;
 }
 
-export function CTAButton({ 
-  children, 
-  href, 
-  variant = "primary", 
-  size = "default", 
+export function CTAButton({
+  children,
+  href,
+  variant = "primary",
+  size = "default",
   className,
   showIcon = true,
-  ...props 
+  ...props
 }: CTAButtonProps) {
   const variants = {
-    primary: "bg-primary text-white shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:bg-primary/90",
-    secondary: "bg-white text-primary border-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5",
-    accent: "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02]",
+    primary:
+      "bg-primary text-white shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:bg-primary/90",
+    secondary:
+      "bg-white text-primary border-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5",
+    accent:
+      "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02]",
   };
 
   const sizes = {
@@ -47,20 +50,16 @@ export function CTAButton({
 
   if (href) {
     return (
-      <a 
-        href={href} 
-        className={baseClasses}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href={href} className={baseClasses} role="link">
         {content}
       </a>
     );
   }
 
   return (
-    <button className={baseClasses} {...props}>
+    <button type="button" className={baseClasses} {...props}>
       {content}
     </button>
   );
 }
+
