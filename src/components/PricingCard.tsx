@@ -20,7 +20,7 @@ export function PricingCard() {
         <h3 className="text-2xl font-bold text-slate-900 mb-2">Acesso Vitalício Pack 2026</h3>
         <div className="flex items-center justify-center gap-2 mb-8">
           <span className="text-slate-400 text-lg line-through decoration-red-500/50 decoration-2">R$ 197,00</span>
-          <span className="text-5xl font-extrabold text-primary">R$ 10,00</span>
+          <span className="text-5xl font-extrabold text-primary">R$ 19,90</span>
         </div>
 
         <CTAButton 
